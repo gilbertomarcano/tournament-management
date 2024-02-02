@@ -1,34 +1,34 @@
-# Tournament Management
+# Gestión de Torneos
 
-A brief introduction to the Tournament Management project. Describe what the project does, its main features, and any unique selling points or technical details that might interest readers.
+Una breve introducción al proyecto de Gestión de Torneos. Describe qué hace el proyecto, sus principales características y cualquier punto de venta único o detalles técnicos que puedan interesar a los lectores.
 
-## Getting Started
+## Primeros pasos
 
-These instructions will guide you through setting up the project on your local machine for development and testing purposes, as well as deploying it for live use.
+Estas instrucciones te guiarán para configurar el proyecto en tu máquina local con fines de desarrollo y pruebas, así como para desplegarlo para uso en vivo.
 
-### Prerequisites
+### Prerrequisitos
 
-Before you begin, ensure you have the following installed on your system:
+Antes de comenzar, asegúrate de tener lo siguiente instalado en tu sistema:
 
 - [Docker](https://www.docker.com/get-started)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
-These tools are required to build and run the containers for the project.
+Estas herramientas son necesarias para construir y ejecutar los contenedores del proyecto.
 
-### Setup
+### Configuración
 
-This project utilizes a Makefile to streamline Docker operations such as building images and starting services. The Makefile defines several targets for convenience.
+Este proyecto utiliza un Makefile para simplificar las operaciones de Docker, como construir imágenes e iniciar servicios. El Makefile define varios objetivos para conveniencia.
 
-#### Understanding the Makefile
+#### Entendiendo el Makefile
 
-The Makefile contains directives for Docker Compose and sets a default project name to `tournament-management`. It includes the following targets:
+El Makefile contiene directivas para Docker Compose y establece un nombre de proyecto predeterminado como `tournament-management`. Incluye los siguientes objetivos:
 
-- `build`: Builds the Docker images for the project.
-- `up`: Launches the containers in detached mode.
+- `build`: Construye las imágenes Docker para el proyecto.
+- `up`: Lanza los contenedores en modo detached.
 
-### Building the Project
+### Construyendo el Proyecto
 
-To build Docker images for the project, run the following command from the project's root directory:
+Para construir las imágenes Docker para el proyecto, ejecuta el siguiente comando desde el directorio raíz del proyecto:
 
 ```bash
 make build
