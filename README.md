@@ -1,74 +1,34 @@
-# Football Tournament Management.
+# Tournament Management
 
-Brief description.
+A brief introduction to the Tournament Management project. Describe what the project does, its main features, and any unique selling points or technical details that might interest readers.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will guide you through setting up the project on your local machine for development and testing purposes, as well as deploying it for live use.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
+Before you begin, ensure you have the following installed on your system:
 
-- Python 3.12.1 or later
-- Access to command line interface (CLI) - Terminal on macOS/Linux and Command Prompt/PowerShell on Windows.
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Setting Up a Virtual Environment
+These tools are required to build and run the containers for the project.
 
-A virtual environment is an isolated Python environment that allows you to manage project-specific dependencies separately from other projects. Here's how you can set one up:
+### Setup
 
-#### On Windows
+This project utilizes a Makefile to streamline Docker operations such as building images and starting services. The Makefile defines several targets for convenience.
 
-1. **Create the Virtual Environment:**
-   - Open Command Prompt or PowerShell.
-   - Navigate to your project's directory:
-     ```cmd
-     cd path/to/tournament-management/server
-     ```
-   - Create the virtual environment:
-     ```cmd
-     python -m venv env
-     ```
-     Replace `env` with your desired environment name.
+#### Understanding the Makefile
 
-2. **Activate the Virtual Environment:**
-   - In Command Prompt:
-     ```cmd
-     .\env\Scripts\activate
-     ```
-   - In PowerShell:
-     ```powershell
-     .\env\Scripts\Activate.ps1
-     ```
-   - If you encounter permissions errors in PowerShell, you might need to adjust the execution policy:
-     ```powershell
-     Set-ExecutionPolicy Unrestricted -Scope Process
-     ```
-     Then, try activating the environment again.
+The Makefile contains directives for Docker Compose and sets a default project name to `tournament-management`. It includes the following targets:
 
-#### On macOS (and Linux)
+- `build`: Builds the Docker images for the project.
+- `up`: Launches the containers in detached mode.
 
-1. **Create the Virtual Environment:**
-   - Open Terminal.
-   - Navigate to your project's directory:
-     ```bash
-     cd path/to/tournament-management/server
-     ```
-   - Create the virtual environment:
-     ```bash
-     python3 -m venv env
-     ```
-     Replace `env` with your desired environment name.
+### Building the Project
 
-2. **Activate the Virtual Environment:**
-   - In Terminal:
-     ```bash
-     source env/bin/activate
-     ```
-
-### Deactivating the Virtual Environment
-
-To deactivate the virtual environment and return to your global Python setup, simply run:
+To build Docker images for the project, run the following command from the project's root directory:
 
 ```bash
-deactivate
+make build
