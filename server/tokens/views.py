@@ -6,16 +6,21 @@ from django.contrib.auth import authenticate, login
 from django.db.models import CharField
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
-
+from django.contrib.auth.middleware import AuthenticationMiddleware
 from utils.mixins import ErrorMixin
 from utils.validators import FieldValidator
 
+from django.contrib.auth.decorators import login_required
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 @method_decorator(csrf_exempt, name='dispatch')
-class AuthView(ErrorMixin, View):
+class TokenView(ErrorMixin, View):
     def get(self, request):
         return JsonResponse({'data': 'happy'}, status=200)
     
     def post(self, request):
+        print('USER ->', request.user)
         """Handles POST requests for user authentication."""
         # Example: Extract username and password from request.POST
         data = json.loads(request.body)

@@ -2,5 +2,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.AuthView.as_view(), name="auth"),
+    path("", views.TokenView.as_view(), name="token"),
 ]

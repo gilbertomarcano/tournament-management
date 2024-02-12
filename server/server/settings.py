@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
+    'tokens'
 ]
 
 MIDDLEWARE = [
@@ -47,6 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # 'utils.middleware.TokenAuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'server.urls'
@@ -66,6 +70,11 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'django_token.backends.TokenBackend'
+)
 
 WSGI_APPLICATION = 'server.wsgi.application'
 
