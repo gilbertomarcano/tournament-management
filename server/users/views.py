@@ -1,30 +1,32 @@
 # Create your views here.
 from collections.abc import Collection, Iterable
-import json
-from typing import Any
-from django.db.models.base import Model
 from django.http import JsonResponse
-from django.core import serializers
 from django.contrib.auth.models import User
 from django.views import View
-from django.db import models
-from django.core.serializers.python import Serializer
+from utils.serializers import ModelSerializer
+from utils.mixins import ErrorMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
-
-class UserSerializer(Serializer):
-    def end_object(self, obj: Any) -> None:
-        print('hello')
-        print(self)
-        print(self.objects)
-        obj.custom = 'custom_value'
-        print(obj, type(obj))
-        # self.objects[-1]['custom_field'] = 'custom_value'
-        return super().end_object(obj)
-
-
-class UserListView(View):
+class UserListView(ErrorMixin, View):
     def get(self, request):
         """Handles GET requests to list users."""
         users = User.objects.all()
-        serialized_data = UserSerializer().serialize(users)
-        return JsonResponse({'data': serialized_data}, status=201)
+        serialized_data = ModelSerializer().serialize(users, exclude=['password'])
+        return JsonResponse({'data': serialized_data}, status=200)
+
+
+class UserView(ErrorMixin, View):
+    def get(self, request, user_id):
+        """Handles GET requests to list users."""
+        user = User.objects.get(id=user_id)
+        serialized_data = ModelSerializer().serialize(user, exclude=['password'])
+        return JsonResponse(serialized_data, status=200)
+
+
+class UserMeView(ErrorMixin, View):
+    def get(self, request):
+        """Handles GET requests to list users."""
+        user = request.user
+        serialized_data = ModelSerializer().serialize(user, exclude=['password'])
+        return JsonResponse(serialized_data, status=200)

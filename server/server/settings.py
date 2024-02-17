@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 
-    # 'utils.middleware.TokenAuthenticationMiddleware',
+    'utils.middleware.TokenAuthenticationMiddleware',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True  # For development only; specify your frontend origin in production
