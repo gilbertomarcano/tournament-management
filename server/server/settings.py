@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'users',
     'tokens'
 ]
@@ -49,9 +50,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 
     # 'utils.middleware.TokenAuthenticationMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True  # For development only; specify your frontend origin in production
 
 ROOT_URLCONF = 'server.urls'
 
@@ -71,10 +75,10 @@ TEMPLATES = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'django_token.backends.TokenBackend'
-)
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend',
+#     'django_token.backends.TokenBackend'
+# )
 
 WSGI_APPLICATION = 'server.wsgi.application'
 
