@@ -8,11 +8,14 @@ import {
   VStack,
   useToast,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+
 
 const LoginScreen: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const toast = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,19 +40,15 @@ const LoginScreen: React.FC = () => {
       const token = data.fields.token;
       localStorage.setItem('authToken', token);
 
-      // Assuming the backend sends a success message or token
       toast({
         title: 'Login Successful',
-        description: data.message, // Customize based on the actual response
+        description: data.message,
         status: 'success',
         duration: 5000,
         isClosable: true,
       });
 
-      window.location.reload()
-
-      // Redirect or update the UI accordingly
-      // For example, saving the token, updating global state, redirecting, etc.
+      navigate("/home")
 
     } catch (error) {
       toast({

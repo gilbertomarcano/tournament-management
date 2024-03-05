@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Box, VStack, Avatar, Text, Button, HStack, Badge, Divider } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const Home: React.FC = () => {
   const [userData, setUserData] = useState(null);
   const toast = useToast();
+
+  const navigate = useNavigate(); // Initialize the navigate function
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +41,10 @@ const Home: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     window.location.reload()
+  };
+
+  const handleCreateTournamentClick = () => {
+    navigate('/create-tournament'); // Use navigate to change the route
   };
 
   return (
@@ -74,7 +81,9 @@ const Home: React.FC = () => {
               <Text fontSize="md" color="gray.600">{userData ? new Date(userData.date_joined).toLocaleString() : 'Loading...'}</Text>
             </HStack>
           </Box>
-          <Button colorScheme="blue" width="full" mt={4} onClick={handleLogout}>Logout</Button>
+          <Button colorScheme="blue" width="full" mt={4}>View Tournaments</Button>
+          <Button colorScheme="green" width="full" mt={4} onClick={handleCreateTournamentClick}>Create Tournament</Button>
+          <Button colorScheme="red" width="full" mt={4} onClick={handleLogout}>Logout</Button>
         </VStack>
       </Box>
     </Box>
