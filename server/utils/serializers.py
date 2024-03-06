@@ -16,8 +16,10 @@ class ModelSerializer(Serializer):
         if not isinstance(queryset, QuerySet):
             concrete_model = queryset._meta.concrete_model
             queryset = [queryset]
-        else:
+        elif queryset:
             concrete_model = queryset[0]._meta.concrete_model
+        else:
+            return []
         
         if fields and exclude:
             raise TypeError('Cannot set fields and exclude at the same time.')
@@ -27,8 +29,10 @@ class ModelSerializer(Serializer):
             for field in concrete_model._meta.local_fields:
                 if field.attname not in exclude:
                     fields.append(field.attname)
+        
         data = super().serialize(queryset, fields=fields, **options)
         return data if isinstance(queryset, QuerySet) else data[0]
+
 
 
 class TestSerializer(Serializer):

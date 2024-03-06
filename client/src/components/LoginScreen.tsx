@@ -48,7 +48,8 @@ const LoginScreen: React.FC = () => {
         isClosable: true,
       });
 
-      navigate("/home")
+      navigate("/")
+      window.location.reload()
 
     } catch (error) {
       toast({

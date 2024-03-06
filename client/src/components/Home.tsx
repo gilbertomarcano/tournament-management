@@ -43,8 +43,12 @@ const Home: React.FC = () => {
     window.location.reload()
   };
 
+  const handleViewTournamentClick = () => {
+    navigate('/tournaments')
+  }
+
   const handleCreateTournamentClick = () => {
-    navigate('/create-tournament'); // Use navigate to change the route
+    navigate('/tournaments/create'); // Use navigate to change the route
   };
 
   return (
@@ -81,7 +85,7 @@ const Home: React.FC = () => {
               <Text fontSize="md" color="gray.600">{userData ? new Date(userData.date_joined).toLocaleString() : 'Loading...'}</Text>
             </HStack>
           </Box>
-          <Button colorScheme="blue" width="full" mt={4}>View Tournaments</Button>
+          <Button colorScheme="blue" width="full" mt={4} onClick={handleViewTournamentClick}>View Tournaments</Button>
           <Button colorScheme="green" width="full" mt={4} onClick={handleCreateTournamentClick}>Create Tournament</Button>
           <Button colorScheme="red" width="full" mt={4} onClick={handleLogout}>Logout</Button>
         </VStack>

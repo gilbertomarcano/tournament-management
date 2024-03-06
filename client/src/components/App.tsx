@@ -3,61 +3,26 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Home from './Home';
 import LoginScreen from './LoginScreen';
 import CreateTournament from './CreateTournament';
-
-// Define the context's type
-interface AuthContextType {
-  isAuthenticated: boolean;
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
-}
-
-// Create the context
-const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
-
-// Custom hook for using the auth context
-const useAuth = () => {
-  const context = React.useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-// AuthProvider component within App.tsx
-const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(!!localStorage.getItem('authToken'));
-
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+import CreateTeams from './CreateTeams';
+import ViewGroups from './ViewGroups';
+import ViewTournaments from './ViewTournaments';
 
 const App: React.FC = () => {
+  const isAuthenticated = localStorage.getItem('authToken');
+
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
       <Routes>
-        <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path="/login" element={<LoginRedirectRoute><LoginScreen /></LoginRedirectRoute>} />
-        <Route path="/create-tournament" element={<ProtectedRoute><CreateTournament /></ProtectedRoute>} />
-        <Route path="*" element={<Navigate to="/home" replace />} />
+        <Route path="/" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/login" element={<LoginScreen />} />
+        <Route path="/tournaments" element={isAuthenticated ? <ViewTournaments/> : <Navigate to="/login" />} />
+        <Route path="/tournaments/create" element={isAuthenticated ? <CreateTournament/> : <Navigate to="/login" />} />
+        <Route path="/tournaments/:id" element={isAuthenticated ? <CreateTeams/> : <Navigate to="/login" />} />
+        <Route path="/tournaments/:id/groups" element={isAuthenticated ? <ViewGroups/> : <Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
-  </AuthProvider>
   );
-};
-
-// ProtectedRoute component using useAuth
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
-};
-
-// LoginRedirectRoute component using useAuth
-const LoginRedirectRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  return !isAuthenticated ? <>{children}</> : <Navigate to="/home" replace />;
 };
 
 export default App;
