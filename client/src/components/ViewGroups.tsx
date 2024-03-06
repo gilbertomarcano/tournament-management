@@ -19,7 +19,7 @@ const ViewGroups: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [groupData, setGroupData] = useState<{ [group: string]: Team[] }>({});
-  const [tournament, setTournament] = useState<{ status: string } | null>(null);
+  const [tournament, setTournament] = useState<{ fields: {status: string} } | null>(null);
 
   useEffect(() => {
     const fetchGroupData = async () => {
@@ -100,7 +100,7 @@ const ViewGroups: React.FC = () => {
                     <Th isNumeric px={2}>V</Th>
                     <Th isNumeric px={2}>E</Th>
                     <Th isNumeric px={2}>D</Th>
-                    <Th isNumeric px={2}>G</Th>
+                    <Th isNumeric px={2}>GF</Th>
                     <Th isNumeric px={2}>GE</Th>
                     <Th isNumeric px={2}>GD</Th>
                     <Th isNumeric px={2} fontWeight="bold">Puntos</Th>
