@@ -6,6 +6,7 @@ from django.views import View
 from django.db.models import CharField, IntegerField, Count, Sum, F, Case, When, Value, Q
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from tournaments.models import GroupLabel, Team, Tournament, TournamentStatus, Group, Match, MatchType
 from utils.mixins import ErrorMixin
@@ -73,7 +74,9 @@ class TeamView(ErrorMixin, View):
 
         teams = teams.annotate(
             local_goals=Coalesce(Sum('local_match_set__local_goals', filter=Q(local_match_set__local_team=F('id')) & Q(local_match_set__type='groups')), 0),
+            local_goals_conceded=Coalesce(Sum('local_match_set__away_goals', filter=Q(local_match_set__local_team=F('id')) & Q(local_match_set__type='groups')), 0),
             away_goals=Coalesce(Sum('away_match_set__away_goals', filter=Q(away_match_set__away_team=F('id')) & Q(away_match_set__type='groups')), 0),
+            away_goals_conceded=Coalesce(Sum('away_match_set__local_goals', filter=Q(away_match_set__away_team=F('id')) & Q(away_match_set__type='groups')), 0),
             local_wins=Coalesce(Sum(Case(When(Q(local_match_set__local_goals__gt=F('local_match_set__away_goals')) & Q(local_match_set__type='groups'), then=Value(1)), default=Value(0), output_field=IntegerField())), 0),
             away_wins=Coalesce(Sum(Case(When(Q(away_match_set__away_goals__gt=F('away_match_set__local_goals')) & Q(away_match_set__type='groups'), then=Value(1)), default=Value(0), output_field=IntegerField())), 0),
             local_losses=Coalesce(Sum(Case(When(Q(local_match_set__local_goals__lt=F('local_match_set__away_goals')) & Q(local_match_set__type='groups'), then=Value(1)), default=Value(0), output_field=IntegerField())), 0),
@@ -95,6 +98,8 @@ class TeamView(ErrorMixin, View):
             ),
         ).annotate(
             goals=F('local_goals') + F('away_goals'),
+            goals_conceded=F('local_goals_conceded') + F('away_goals_conceded'),
+            goals_difference=F('goals') - F('goals_conceded'),
             wins=F('local_wins') + F('away_wins'),
             losses=F('local_losses') + F('away_losses'),
             draws=F('local_draws') + F('away_draws'),
@@ -104,14 +109,18 @@ class TeamView(ErrorMixin, View):
         preserialized_data = ModelSerializer().serialize(teams)
         for item in preserialized_data:
             item['fields']['local_goals'] = teams.get(id=item['pk']).local_goals
+            item['fields']['local_goals_conceded'] = teams.get(id=item['pk']).local_goals_conceded
             item['fields']['local_wins'] = teams.get(id=item['pk']).local_wins
             item['fields']['local_losses'] = teams.get(id=item['pk']).local_losses
             item['fields']['local_draws'] = teams.get(id=item['pk']).local_draws
             item['fields']['away_goals'] = teams.get(id=item['pk']).away_goals
+            item['fields']['away_goals_conceded'] = teams.get(id=item['pk']).away_goals_conceded
             item['fields']['away_wins'] = teams.get(id=item['pk']).away_wins
             item['fields']['away_losses'] = teams.get(id=item['pk']).away_losses
             item['fields']['away_draws'] = teams.get(id=item['pk']).away_draws
             item['fields']['goals'] = teams.get(id=item['pk']).goals
+            item['fields']['goals_conceded'] = teams.get(id=item['pk']).goals_conceded
+            item['fields']['goals_difference'] = teams.get(id=item['pk']).goals_difference
             item['fields']['wins'] = teams.get(id=item['pk']).wins
             item['fields']['losses'] = teams.get(id=item['pk']).losses
             item['fields']['draws'] = teams.get(id=item['pk']).draws
@@ -137,7 +146,7 @@ class TeamView(ErrorMixin, View):
         )
         enrolled_team_size = tournament.group_set.aggregate(total_teams_count=Count('team'))['total_teams_count'] or 0
         if enrolled_team_size == tournament.team_size:
-            Tournament.objects.filter(id=tournament_id).update(status=TournamentStatus.OPEN)
+            Tournament.objects.filter(id=tournament_id).update(status=TournamentStatus.OPEN, started_at=timezone.now())
         serialized_data = ModelSerializer().serialize(team)
         return JsonResponse(serialized_data, status=201)
 
@@ -174,6 +183,7 @@ class MatchView(ErrorMixin, View):
                             away_goals=match_result['away_goals']
                         )
                         simulation_results.append(match_result)
+            Tournament.objects.filter(id=tournament.id).update(status=TournamentStatus.CLOSED, closed_at=timezone.now())
 
         return JsonResponse({'status': 'Simulation complete'}, status=200)
 

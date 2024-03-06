@@ -55,8 +55,12 @@ const ViewTournament: React.FC = () => {
         fetchTournaments();
     }, []); // Dependency array is empty, so it only runs once when the component mounts
 
-    const handleViewTournament = (tournamentId: number) => {
-        navigate(`/tournaments/${tournamentId}/groups`);
+    const handleViewTournament = (tournamentId: number, tournamentStatus: string) => {
+        if (tournamentStatus === 'draft') {
+            navigate(`/tournaments/${tournamentId}`);
+        } else {
+            navigate(`/tournaments/${tournamentId}/groups`);
+        }
     };
 
     const handleBack = () => {
@@ -86,8 +90,7 @@ const ViewTournament: React.FC = () => {
                                 <Td>{tournament.teamSize}</Td>
                                 <Td>{tournament.status}</Td>
                                 <Td>
-                                    {/* Pass tournament id to handleViewTournament */}
-                                    <Button colorScheme="blue" size="sm" onClick={() => handleViewTournament(tournament.id)}>View</Button>
+                                    <Button colorScheme="blue" size="sm" onClick={() => handleViewTournament(tournament.id, tournament.status)}>View</Button>
                                 </Td>
                             </Tr>
                         ))}

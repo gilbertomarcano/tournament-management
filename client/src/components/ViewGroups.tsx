@@ -6,6 +6,8 @@ interface Team {
   id: number;
   name: string;
   goals: number;
+  goals_conceded: number;
+  goals_difference: number;
   wins: number;
   losses: number;
   draws: number;
@@ -17,6 +19,7 @@ const ViewGroups: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [groupData, setGroupData] = useState<{ [group: string]: Team[] }>({});
+  const [tournament, setTournament] = useState<{ status: string } | null>(null);
 
   useEffect(() => {
     const fetchGroupData = async () => {
@@ -31,7 +34,9 @@ const ViewGroups: React.FC = () => {
         return responseData.data.map((team) => ({
           id: team.pk,
           name: team.fields.name,
-          goals: team.fields.goals, // Assuming these fields are directly available
+          goals: team.fields.goals,
+          goals_conceded: team.fields.goals_conceded,
+          goals_difference: team.fields.goals_difference,
           wins: team.fields.wins,
           losses: team.fields.losses,
           draws: team.fields.draws,
@@ -48,8 +53,18 @@ const ViewGroups: React.FC = () => {
       setGroupData(groupDataObject);
     };
 
+    const fetchTournamentData = async () => {
+      // Fetch tournament data and handle response...
+      // Assuming you get a response with tournament status
+      const tournamentResponse = await fetch(`http://localhost:8000/tournaments/${id}`);
+      const tournamentData = await tournamentResponse.json();
+      setTournament(tournamentData);
+      console.log(tournament)
+    };
+
 
     fetchGroupData();
+    fetchTournamentData()
   }, [id]);
 
   const handleSimulator = async () => {
@@ -72,40 +87,44 @@ const ViewGroups: React.FC = () => {
   };
 
   return (
-    <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" bg="gray.100">
+    <Box minH="105vh" display="flex" alignItems="center" justifyContent="center" bg="gray.100">
       <VStack spacing={4} bg="white" p={8} borderRadius="lg" boxShadow="lg" width="full" maxW="lg">
-        <Heading as="h2" size="lg" textAlign="center">View Groups</Heading>
+        <Heading as="h2" size="lg" textAlign="center">Grupos</Heading>
         {['A', 'B', 'C', 'D'].map((group) => (
           <Box key={`Group ${group}`} w="full">
-            <Heading as="h3" size="md" textAlign="center">{`Group ${group}`}</Heading>
+            <Heading as="h3" size="md" textAlign="center">{`Grupo ${group}`}</Heading>
             <Table variant="simple" size="sm">
               <Thead>
-                <Tr>
-                  <Th>Team Name</Th>
-                  <Th isNumeric>Goals</Th>
-                  <Th isNumeric>Wins</Th>
-                  <Th isNumeric>Draws</Th>
-                  <Th isNumeric>Losses</Th>
-                  <Th isNumeric fontWeight="bold">Points</Th>
-                </Tr>
+              <Tr>
+                    <Th px={4}>Equipo</Th>
+                    <Th isNumeric px={2}>V</Th>
+                    <Th isNumeric px={2}>E</Th>
+                    <Th isNumeric px={2}>D</Th>
+                    <Th isNumeric px={2}>G</Th>
+                    <Th isNumeric px={2}>GE</Th>
+                    <Th isNumeric px={2}>GD</Th>
+                    <Th isNumeric px={2} fontWeight="bold">Puntos</Th>
+                  </Tr>
               </Thead>
               <Tbody>
                 {groupData[group]?.map((team) => (
-                  <Tr key={team.id}>
-                    <Td>{team.name}</Td>
-                    <Td isNumeric>{team.goals}</Td>
-                    <Td isNumeric>{team.wins}</Td>
-                    <Td isNumeric>{team.draws}</Td>
-                    <Td isNumeric>{team.losses}</Td>
-                    <Td isNumeric fontWeight="bold">{team.points}</Td>
-                  </Tr>
+                 <Tr key={team.id}>
+                      <Td px={4}>{team.name}</Td>
+                      <Td isNumeric px={2}>{team.wins}</Td>
+                      <Td isNumeric px={2}>{team.draws}</Td>
+                      <Td isNumeric px={2}>{team.losses}</Td>
+                      <Td isNumeric px={2}>{team.goals}</Td>
+                      <Td isNumeric px={2}>{team.goals_conceded}</Td>
+                      <Td isNumeric px={2}>{team.goals_difference}</Td>
+                      <Td isNumeric px={2} fontWeight="bold">{team.points}</Td>
+                    </Tr>
                 ))}
               </Tbody>
             </Table>
 
           </Box>
         ))}
-        <Button type="button" colorScheme="blue" width="full" onClick={handleSimulator}>Simular Fase de Grupos</Button>
+        <Button type="button" colorScheme="blue" width="full" onClick={handleSimulator} isDisabled={tournament?.fields.status === 'closed'}>Simular Fase de Grupos</Button>
         <Button type="button" colorScheme="red" width="full" onClick={handleBack}>Back</Button>
       </VStack>
     </Box>
