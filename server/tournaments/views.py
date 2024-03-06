@@ -83,20 +83,8 @@ class TeamView(ErrorMixin, View):
             away_losses=Coalesce(Sum(Case(When(Q(away_match_set__away_goals__lt=F('away_match_set__local_goals')) & Q(away_match_set__type='groups'), then=Value(1)), default=Value(0), output_field=IntegerField())), 0),
             local_draws=Coalesce(Sum(Case(When(Q(local_match_set__local_goals=F('local_match_set__away_goals')) & Q(local_match_set__type='groups'), then=Value(1)), default=Value(0), output_field=IntegerField())), 0),
             away_draws=Coalesce(Sum(Case(When(Q(away_match_set__away_goals=F('away_match_set__local_goals')) & Q(away_match_set__type='groups'), then=Value(1)), default=Value(0), output_field=IntegerField())), 0),
-            points=Coalesce(
-                Sum(
-                    Case(
-                        When(Q(local_match_set__local_goals__gt=F('local_match_set__away_goals')) & Q(local_match_set__type='groups'), then=Value(POINTS_FOR_WIN)),
-                        When(Q(away_match_set__away_goals__gt=F('away_match_set__local_goals')) & Q(away_match_set__type='groups'), then=Value(POINTS_FOR_WIN)),
-                        When(Q(local_match_set__local_goals=F('local_match_set__away_goals')) & Q(local_match_set__type='groups'), then=Value(POINTS_FOR_DRAW)),
-                        When(Q(away_match_set__away_goals=F('away_match_set__local_goals')) & Q(away_match_set__type='groups'), then=Value(POINTS_FOR_DRAW)),
-                        default=Value(0),
-                        output_field=IntegerField()
-                    )
-                ), 
-                0
-            ),
         ).annotate(
+            points=(F('local_wins') + F('away_wins')) * POINTS_FOR_WIN + (F('local_draws') + F('away_draws')) * POINTS_FOR_DRAW,
             goals=F('local_goals') + F('away_goals'),
             goals_conceded=F('local_goals_conceded') + F('away_goals_conceded'),
             goals_difference=F('goals') - F('goals_conceded'),
