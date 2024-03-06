@@ -7,7 +7,6 @@ from django.contrib.auth import authenticate, login
 from django.db.models import CharField
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
-from django.contrib.auth.middleware import AuthenticationMiddleware
 from tokens.models import AuthToken
 from utils.mixins import ErrorMixin
 from utils.serializers import ModelSerializer
